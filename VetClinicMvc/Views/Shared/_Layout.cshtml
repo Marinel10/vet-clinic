@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vet Clinic</title><link rel="stylesheet" href="~/css/site.css" /></head>
+<body><header><nav><a asp-controller="Home" asp-action="Index">Vet Clinic</a><a asp-controller="Account" asp-action="Register">Register</a></nav></header>
+<main>@RenderBody()</main><footer>Vet Clinic — university project</footer>
+@await RenderSectionAsync("Scripts", required: false)
+</body></html>
