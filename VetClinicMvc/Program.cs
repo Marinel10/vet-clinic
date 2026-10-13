@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using VetClinicMvc.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddDbContext<VetDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("VetClinic")));
 
 var app = builder.Build();
 
