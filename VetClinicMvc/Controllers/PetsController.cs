@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using VetClinicMvc.Data;
 using VetClinicMvc.Models;
 using VetClinicMvc.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace VetClinicMvc.Controllers;
 
@@ -15,6 +16,45 @@ public class PetsController : Controller
     private readonly VetDbContext _db;
 
     public PetsController(VetDbContext db) => _db = db;
+
+
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var userIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdText, out var ownerId))
+            return Forbid();
+
+        var pets = await _db.Pets
+            .AsNoTracking()
+            .Where(p => p.OwnerId == ownerId)
+            .OrderBy(p => p.Name)
+            .ToListAsync();
+
+        return View(pets);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        var userIdText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdText, out var ownerId))
+            return Forbid();
+
+        var pet = await _db.Pets
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                p => p.Id == id && p.OwnerId == ownerId);
+
+        if (pet == null)
+            return NotFound();
+
+        return View(pet);
+    }
+
+
 
     [HttpGet]
     public IActionResult Create() => View(new CreatePetViewModel());

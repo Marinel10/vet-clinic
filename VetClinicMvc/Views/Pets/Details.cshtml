@@ -1,0 +1,33 @@
+﻿@model VetClinicMvc.Models.Pet
+
+@{
+    ViewData["Title"] = "Pet Profile";
+}
+
+<h1>Pet Profile</h1>
+
+<div>
+    <h2>@Model.Name</h2>
+
+    <p>
+        <strong>Species:</strong>
+        @Model.Species
+    </p>
+
+    <p>
+        <strong>Breed:</strong>
+        @(Model.Breed ?? "Not specified")
+    </p>
+
+    <p>
+        <strong>BirthDate:</strong>
+        @(Model.BirthDate?.ToString("dd MMM yyyy")
+                ?? "Not specified")
+    </p>
+</div>
+
+<p>
+    <a asp-controller="Pets" asp-action="Index">
+        Back to My Pets
+    </a>
+</p>
