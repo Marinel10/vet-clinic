@@ -1,0 +1,48 @@
+﻿@model IEnumerable<VetClinicMvc.Models.Pet>
+
+@{
+    ViewData["Title"] = "My Pets";
+}
+
+<h1>My Pets</h1>
+
+<p>
+    <a asp-controller="Pets" asp-action="Create">
+        Add New Pet
+    </a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>You have not added any pets yet.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Species</th>
+                <th>Breed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pet in Model)
+            {
+                <tr>
+                    <td>@pet.Name</td>
+                    <td>@pet.Species</td>
+                    <td>@(pet.Breed ?? "Not specified")</td>
+                    <td>
+                        <a asp-controller="Pets"
+                           asp-action="Details"
+                           asp-route-id="@pet.Id">
+                            View Profile
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
