@@ -21,6 +21,12 @@
                     Welcome, @User.Identity.Name!
                 </span>
 
+
+                <a asp-controller="Pets"
+                   asp-action="Create">
+                    Add Pet
+                </a>
+
                 <form asp-controller="Login"
                       asp-action="Logout"
                       method="post"
@@ -28,6 +34,8 @@
                     @Html.AntiForgeryToken()
                     <button type="submit">Logout</button>
                 </form>
+
+             
             }
             else
             {
@@ -40,6 +48,9 @@
                    asp-action="Index">
                     Login
                 </a>
+
+            
+           
             }
         </nav>
     </header>
