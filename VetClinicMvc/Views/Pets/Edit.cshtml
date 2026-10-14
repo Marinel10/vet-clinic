@@ -1,0 +1,35 @@
+@model VetClinicMvc.ViewModels.EditPetViewModel
+
+@{
+    ViewData["Title"] = "Edit Pet";
+}
+
+<h1>Edit Pet</h1>
+<form asp-controller="Pets" asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div>
+        <label asp-for="Species"></label>
+        <input asp-for="Species" />
+        <span asp-validation-for="Species"></span>
+    </div>
+    <div>
+        <label asp-for="Breed"></label>
+        <input asp-for="Breed" />
+        <span asp-validation-for="Breed"></span>
+    </div>
+    <div>
+        <label asp-for="BirthDate"></label>
+        <input asp-for="BirthDate" type="date" />
+        <span asp-validation-for="BirthDate"></span>
+    </div>
+    <button type="submit">Save Changes</button>
+    <a asp-controller="Pets" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+</form>
