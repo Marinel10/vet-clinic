@@ -1,7 +1,57 @@
+
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Vet Clinic</title><link rel="stylesheet" href="~/css/site.css" /></head>
-<body><header><nav><a asp-controller="Home" asp-action="Index">Vet Clinic</a><a asp-controller="Account" asp-action="Register">Register</a></nav></header>
-<main>@RenderBody()</main><footer>Vet Clinic — university project</footer>
-@await RenderSectionAsync("Scripts", required: false)
-</body></html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+    <title>Vet Clinic</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav>
+            <a asp-controller="Home" asp-action="Index">
+                Vet Clinic
+            </a>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <span>
+                    Welcome, @User.Identity.Name!
+                </span>
+
+                <form asp-controller="Login"
+                      asp-action="Logout"
+                      method="post"
+                      style="display:inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit">Logout</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account"
+                   asp-action="Register">
+                    Register
+                </a>
+
+                <a asp-controller="Login"
+                   asp-action="Index">
+                    Login
+                </a>
+            }
+        </nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        Vet Clinic — university project
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
