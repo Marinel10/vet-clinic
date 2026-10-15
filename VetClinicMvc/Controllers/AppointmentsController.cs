@@ -79,6 +79,63 @@ public class AppointmentsController : Controller
         return RedirectToAction(nameof(Create));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        if (!TryGetOwnerId(out var ownerId)) return Forbid();
+
+        var appointment = await _db.Appointments.AsNoTracking()
+            .Join(_db.Pets, a => a.PetId, p => p.Id, (a, p) => new { Appointment = a, Pet = p })
+            .Where(x => x.Appointment.Id == id && x.Pet.OwnerId == ownerId)
+            .Select(x => x.Appointment)
+            .FirstOrDefaultAsync();
+
+        if (appointment == null) return NotFound();
+        if (appointment.Status != "scheduled") return BadRequest("Only scheduled appointments can be rescheduled.");
+
+        return View(new RescheduleAppointmentViewModel
+        {
+            Id = appointment.Id,
+            StartsAt = appointment.StartsAt
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, RescheduleAppointmentViewModel model)
+    {
+        if (!TryGetOwnerId(out var ownerId)) return Forbid();
+        if (id != model.Id) return BadRequest();
+
+        var appointment = await _db.Appointments
+            .Join(_db.Pets, a => a.PetId, p => p.Id, (a, p) => new { Appointment = a, Pet = p })
+            .Where(x => x.Appointment.Id == id && x.Pet.OwnerId == ownerId)
+            .Select(x => x.Appointment)
+            .FirstOrDefaultAsync();
+
+        if (appointment == null) return NotFound();
+        if (appointment.Status != "scheduled") return BadRequest("Only scheduled appointments can be rescheduled.");
+
+        if (model.StartsAt <= DateTime.Now)
+            ModelState.AddModelError(nameof(model.StartsAt), "Choose a future date and time.");
+
+        if (ModelState.IsValid && await _db.Appointments.AnyAsync(a =>
+            a.Id != appointment.Id &&
+            a.VeterinarianId == appointment.VeterinarianId &&
+            a.StartsAt == model.StartsAt &&
+            a.Status == "scheduled"))
+        {
+            ModelState.AddModelError(nameof(model.StartsAt), "This time slot is already booked.");
+        }
+
+        if (!ModelState.IsValid) return View(model);
+
+        appointment.StartsAt = model.StartsAt;
+        await _db.SaveChangesAsync();
+        TempData["Success"] = "Appointment rescheduled successfully.";
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
     private bool TryGetOwnerId(out int ownerId) =>
         int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out ownerId);
 
