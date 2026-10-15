@@ -43,7 +43,7 @@ public class AppointmentsController : Controller
         if (!validVet)
             ModelState.AddModelError(nameof(model.VeterinarianId), "Select a valid veterinarian.");
 
-        if (ModelState.IsValid && await _db.Appointments.AnyAsync(a =>
+        if (ModelState.IsValid && await _db.Appointment.AnyAsync(a =>
                 a.VeterinarianId == model.VeterinarianId &&
                 a.StartsAt == model.StartsAt && a.Status == "scheduled"))
             ModelState.AddModelError(nameof(model.StartsAt), "This time slot is already booked.");
@@ -54,7 +54,7 @@ public class AppointmentsController : Controller
             return View(model);
         }
 
-        _db.Appointments.Add(new Appointment
+        _db.Appointment.Add(new Appointment
         {
             PetId = model.PetId,
             VeterinarianId = model.VeterinarianId,
