@@ -1,3 +1,4 @@
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using VetClinicMvc.Models;
 
@@ -6,6 +7,8 @@ public class VetDbContext(DbContextOptions<VetDbContext> options) : DbContext(op
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Pet> Pets => Set<Pet>();
+
+    public DbSet<Appointment> Appointment => Set<Appointment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,5 +39,22 @@ public class VetDbContext(DbContextOptions<VetDbContext> options) : DbContext(op
             entity.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("SYSUTCDATETIME()");
             entity.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.NoAction);
         });
+
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.ToTable("appointments", "dbo");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.PetId).HasColumnName("pet_id");
+            entity.Property(x => x.VeterinarianId).HasColumnName("veterinarian_id");
+            entity.Property(x => x.StartsAt).HasColumnName("starts_at");
+            entity.Property(x => x.Status).HasColumnName("status").HasMaxLength(20).IsRequired();
+            entity.Property(x => x.Reason).HasColumnName("reason").HasMaxLength(500);
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("SYSUTCDATETIME()");
+            entity.HasOne<Pet>().WithMany().HasForeignKey(x => x.PetId).OnDelete(DeleteBehavior.NoAction);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.VeterinarianId).OnDelete(DeleteBehavior.NoAction);
+        });
+
+
     }
 }
