@@ -1,0 +1,38 @@
+@model VetClinicMvc.ViewModels.BookAppointmentViewModel
+@{
+    ViewData["Title"] = "Book Veterinary Appointment";
+}
+<h1>Book Veterinary Appointment</h1>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+<form asp-controller="Appointments" asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="PetId" class="form-label">Pet</label>
+        <select asp-for="PetId" asp-items="ViewBag.Pets" class="form-select">
+            <option value="">Choose a pet</option>
+        </select>
+        <span asp-validation-for="PetId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="VeterinarianId" class="form-label">Veterinarian</label>
+        <select asp-for="VeterinarianId" asp-items="ViewBag.Veterinarians" class="form-select">
+            <option value="">Choose a veterinarian</option>
+        </select>
+        <span asp-validation-for="VeterinarianId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="StartsAt" class="form-label">Date and time</label>
+        <input asp-for="StartsAt" type="datetime-local" class="form-control" />
+        <span asp-validation-for="StartsAt" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Reason" class="form-label">Reason (optional)</label>
+        <textarea asp-for="Reason" class="form-control"></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Book appointment</button>
+</form>
